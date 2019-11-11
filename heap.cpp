@@ -20,11 +20,11 @@ void heap::perUp(int i){
 
 	while(i > 1 && tmp.key < data[i/2].key){
 		data[i] = data[i/2];
-		int m = mapping.setPointer(data[i].id, &data[i]);
+		mapping.setPointer(data[i].id, &data[i]);
 		i = i/2;
 	}
 	data[i] = tmp;
-	int m = mapping.setPointer(data[i].id, &data[i]);
+	mapping.setPointer(data[i].id, &data[i]);
 }
 
 void heap::perDown(int i){
@@ -39,7 +39,7 @@ void heap::perDown(int i){
 
 		if(data[next].key < tmp.key){
 			data[i] = data[next];
-			int m = mapping.setPointer(data[i].id, &data[i]);
+			mapping.setPointer(data[i].id, &data[i]);
 		}else{
 			break;
 		}
@@ -48,7 +48,7 @@ void heap::perDown(int i){
 	}
 
 	data[i] = tmp;
-	int m = mapping.setPointer(data[i].id, &data[i]);
+	mapping.setPointer(data[i].id, &data[i]);
 }
 
 int heap::insert(const string &id, int key, void *pv){
@@ -66,7 +66,7 @@ int heap::insert(const string &id, int key, void *pv){
 	data[i].id = id;
 	data[i].key = key;
 	data[i].pData = pv;
-	int m = mapping.insert(id, &data[i]);
+	mapping.insert(id, &data[i]);
 
 	perUp(i);
 
@@ -102,12 +102,11 @@ int heap::deleteMin(string *pId, int *pKey, void *ppData){
 	if(pKey != nullptr) {*pKey = data[1].key;}
 	if(ppData != nullptr) {ppData = data[1].pData;}
 
-	bool m = mapping.remove(data[1].id);
+	mapping.remove(data[1].id);
 	data[1] = data[size];
 	size--;
 
-	int i = 1;
-	perDown(i);
+	perDown(1);
 
 	return 0;
 }
@@ -123,12 +122,15 @@ int heap::remove(const string &id, int *pKey, void *ppData){
 	if(pKey != nullptr) {*pKey = data[i].key;}
 	if(ppData != nullptr) {ppData = data[i].pData;}
 
-	bool m = mapping.remove(data[i].id);	
+	int k = data[i].key;
+	mapping.remove(data[i].id);	
 	data[i] = data[size];
 	size--;
 
-	if(*pKey != data[i].key){
+	if(k < data[i].key){
 		perDown(i);
+	}else if(k > data[i].key){
+		perUp(i);
 	}
 
 	return 0;
